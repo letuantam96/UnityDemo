@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/2.DrawPath_Sprite.unity
     guid: 5ed7018be05969648a024833298cdb32
+  - enabled: 1
+    path: Assets/Scenes/3.DrawPath_Outline.unity
+    guid: b3a5104d32475294c9a29da7d079f9a3
   m_configObjects: {}
