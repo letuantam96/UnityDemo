@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Home : MonoBehaviour
 {
-    public const string DRAW_PATH_OUTLINE = "2.DrawPath_Outline";
+    public const string DRAW_PATH_OUTLINE = "2.DrawPath_Sprite";
 
     public void DrawPathOutlineBtnPressed()
     {
