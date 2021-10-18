@@ -6,6 +6,7 @@ public class Scene3_Draw : MonoBehaviour
 {
     public Camera m_camera;
     public GameObject brush;
+    public Transform paths;
 
     LineRenderer currentLineRenderer;
 
@@ -34,7 +35,7 @@ public class Scene3_Draw : MonoBehaviour
 
     void CreateBrush()
     {
-        GameObject brushInstance = Instantiate(brush);
+        GameObject brushInstance = Instantiate(brush, paths);
         currentLineRenderer = brushInstance.GetComponent<LineRenderer>();
 
         //because you gotta have 2 points to start a line renderer, 
