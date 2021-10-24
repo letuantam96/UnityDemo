@@ -326,6 +326,57 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 14.713, y: -96.018005, z: 2.969}
+--- !u!1 &408823300
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 408823302}
+  - component: {fileID: 408823301}
+  m_Layer: 0
+  m_Name: Drawing
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &408823301
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408823300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc3e4f0115fc480418576fa97485524f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  brushIMG: []
+  brushSelection: 0
+  areaOfEffectSize: 100
+  strength: 0
+  flattenHeight: 0
+  effectType: 0
+  paints: []
+  paint: 0
+--- !u!4 &408823302
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 408823300}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &500842562
 GameObject:
   m_ObjectHideFlags: 0
@@ -724,6 +775,7 @@ GameObject:
   - component: {fileID: 1298266270}
   - component: {fileID: 1298266269}
   - component: {fileID: 1298266268}
+  - component: {fileID: 1298266271}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -789,6 +841,29 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1298266271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1298266267}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fc3e4f0115fc480418576fa97485524f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  brushIMG:
+  - {fileID: 2800000, guid: bd916b355f53ab144901eeb862a0be0b, type: 3}
+  brushSelection: 0
+  areaOfEffectSize: 100
+  strength: 0.532
+  flattenHeight: 0
+  effectType: 0
+  paints:
+  - {fileID: 8574412962073106934, guid: 56b2820651de357459e8d89d2b4f3f05, type: 2}
+  - {fileID: 8574412962073106934, guid: aa7afa2eb72909e4d8083508573d955f, type: 2}
+  paint: 1
 --- !u!1 &1560728433
 GameObject:
   m_ObjectHideFlags: 0
