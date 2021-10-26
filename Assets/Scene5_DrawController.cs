@@ -98,6 +98,7 @@ namespace Scene5
             {
                 currentLineRenderer.SetPosition(1, tempVer.transform.position);
                 currentInk -= CurrentLineInk;
+                currentLineRenderer.gameObject.GetComponent<Scene5_Line>().SetLength(CurrentLineInk);
             }
 
             UpdateInkTxt(currentInk);

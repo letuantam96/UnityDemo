@@ -471,7 +471,7 @@ MonoBehaviour:
   - {fileID: 728363316}
   - {fileID: 807972532}
   m_camera: {fileID: 374176179}
-  brush: {fileID: 6327517542326970776, guid: 7764502c84f55ce4d803b501ee8757b2, type: 3}
+  brush: {fileID: 6327517542326970776, guid: e0b7568f15f43684199cee6c71c98461, type: 3}
   paths: {fileID: 1976864483}
   inkTxt: {fileID: 133196526}
   snapDistance: 1.5
