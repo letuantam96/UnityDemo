@@ -47,6 +47,7 @@ public class Scene5_PathFinder : MonoBehaviour
         Dictionary<Scene5_Vertex, float> distance = new Dictionary<Scene5_Vertex, float>();
         List<Scene5_Vertex> greenNodes = new List<Scene5_Vertex>();
         Dictionary<Scene5_Vertex, Scene5_Vertex> parents = new Dictionary<Scene5_Vertex, Scene5_Vertex>();
+        Dictionary<Scene5_Vertex, Scene5_Line> parentLine = new Dictionary<Scene5_Vertex, Scene5_Line>();
 
         foreach (var ver in Scene5_DrawController.Instance.allVers)
         {
@@ -58,25 +59,34 @@ public class Scene5_PathFinder : MonoBehaviour
 
         while (tempVer = GetMinVertex(distance, greenNodes))
         {
-            Debug.Log($"tempVer: {tempVer}");
+            //Debug.Log($"tempVer: {tempVer}");
             greenNodes.Add(tempVer);
             foreach (Scene5_Line line in connectLines[tempVer])
             {
                 Scene5_Vertex otherVer = GetOtherVer(tempVer, line);
                 if (!greenNodes.Contains(otherVer))
                 {
-                    Debug.Log($"otherVer: {otherVer}");
+                    //Debug.Log($"otherVer: {otherVer}");
                     if (distance[tempVer] + line.lenght < distance[otherVer])
                     {
                         parents[otherVer] = tempVer;
+                        parentLine[otherVer] = line;
                         distance[otherVer] = distance[tempVer] + line.lenght;
                     }
-                    Debug.Log($"distance[otherVer]: {distance[otherVer]}");
+                    //Debug.Log($"distance[otherVer]: {distance[otherVer]}");
                 }
             }
         }
 
-        Debug.Log($"Result: {distance[end]}");
+
+        Debug.Log($"FindShortestPath: {distance[end]}");
+        // draw
+        tempVer = end;
+        while (parents.ContainsKey(tempVer))
+        {
+            Debug.DrawLine(tempVer.transform.position, parents[tempVer].transform.position, Color.blue, 50f);
+            tempVer = parents[tempVer];
+        }
     }
 
 
