@@ -7,10 +7,13 @@ namespace Scene5
 {
     public class Scene5_DrawController : MonoBehaviour
     {
+        public static Scene5_DrawController Instance;
+
+
         public Scene5_Vertex start;
         public Scene5_Vertex end;
         public List<Scene5_Vertex> vers = new List<Scene5_Vertex>();
-        private List<Scene5_Vertex> allVers;
+        public List<Scene5_Vertex> allVers;
 
         [Header("Other")]
         public Camera m_camera;
@@ -25,6 +28,11 @@ namespace Scene5
         private float currentInk;
 
         private float CurrentLineInk => currentLineRenderer ? Vector3.Distance(currentLineRenderer.GetPosition(0), currentLineRenderer.GetPosition(1)) : 0;
+
+        private void Awake()
+        {
+            Instance = this;
+        }
 
         private void Start()
         {
@@ -72,6 +80,8 @@ namespace Scene5
 
             currentLineRenderer.SetPosition(0, tempVer.transform.position);
             currentLineRenderer.SetPosition(1, mousePos);
+
+            currentLineRenderer.gameObject.GetComponent<Scene5_Line>().SetVertex(tempVer, null);
         }
 
         void OnDraging()
@@ -98,7 +108,11 @@ namespace Scene5
             {
                 currentLineRenderer.SetPosition(1, tempVer.transform.position);
                 currentInk -= CurrentLineInk;
-                currentLineRenderer.gameObject.GetComponent<Scene5_Line>().SetLength(CurrentLineInk);
+                Scene5_Line line = currentLineRenderer.gameObject.GetComponent<Scene5_Line>();
+                line.SetLength(CurrentLineInk);
+                line.SetVertex(null, tempVer);
+
+                Scene5_PathFinder.Instance.LineCreated(line);
             }
 
             UpdateInkTxt(currentInk);

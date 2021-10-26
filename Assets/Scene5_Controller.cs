@@ -19,5 +19,10 @@ namespace Scene5
         {
             SceneManager.LoadScene(0);
         }
+
+        public void ShortestBtnPressed()
+        {
+            Scene5_PathFinder.Instance.FindShortestPath();
+        }
     }
 }
