@@ -24,5 +24,10 @@ namespace Scene5
         {
             Scene5_PathFinder.Instance.FindShortestPath();
         }
+
+        public void AllPathBtnPressed()
+        {
+            Scene5_PathFinder.Instance.FindAllPaths();
+        }
     }
 }

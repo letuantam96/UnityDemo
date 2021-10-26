@@ -12,6 +12,11 @@ public class Scene5_PathFinder : MonoBehaviour
     Scene5_Vertex start;
     Scene5_Vertex end;
 
+
+    // ALL PATH
+    List<Scene5_Vertex> visitedVertexs = new List<Scene5_Vertex>();
+    int count;
+
     private void Awake()
     {
         Instance = this;
@@ -108,6 +113,43 @@ public class Scene5_PathFinder : MonoBehaviour
             }
         }
         return ver;
+    }
+
+
+    // ALL PATH
+    public void FindAllPaths()
+    {
+        visitedVertexs.Clear();
+        count = 0;
+
+        FindPath(start);
+        Debug.Log($"FindAllPaths: {count}");
+    }
+
+    void FindPath(Scene5_Vertex ver)
+    {
+        visitedVertexs.Add(ver);
+        //Debug.Log("visitedVertexs: " + visitedVertexs.Count);
+        foreach (Scene5_Line line in connectLines[ver])
+        {
+            Scene5_Vertex otherVer = GetOtherVer(ver, line);
+            if (!visitedVertexs.Contains(otherVer))
+            {
+                if (otherVer == end)
+                {
+                    count++;
+                }
+                else
+                {
+                    FindPath(otherVer);
+                }
+                
+                if (visitedVertexs[visitedVertexs.Count - 1] == otherVer)
+                {
+                    visitedVertexs.RemoveAt(visitedVertexs.Count - 1);
+                }
+            }
+        }
     }
 
 }
