@@ -12,6 +12,8 @@ public class Scene5_PathFinder : MonoBehaviour
     Scene5_Vertex start;
     Scene5_Vertex end;
 
+    List<Scene5_Line> allLines = new List<Scene5_Line>();
+
 
     // ALL PATH
     List<Scene5_Vertex> visitedVertexs = new List<Scene5_Vertex>();
@@ -32,6 +34,7 @@ public class Scene5_PathFinder : MonoBehaviour
     {
         AddLineTo(line.start, line);
         AddLineTo(line.end, line);
+        allLines.Add(line);
     }
 
     void AddLineTo(Scene5_Vertex ver, Scene5_Line line)
@@ -45,6 +48,33 @@ public class Scene5_PathFinder : MonoBehaviour
         {
             connectLines[ver].Add(line);
         }
+    }
+
+    public void AddIntersect(Scene5_Line line)
+    {
+        foreach (Scene5_Line otherLine in allLines)
+        {
+            Vector2 interPos = new Vector2();
+            bool isIntersect = Intersection.LineIntersection(line.start.transform.position, line.end.transform.position,
+                otherLine.start.transform.position, otherLine.end.transform.position,
+                ref interPos);
+            if (isIntersect && IsNewVertex(interPos))
+            {
+                Debug.Log($"new point: {interPos}");
+                Debug.DrawLine(interPos + new Vector2(0f, -0.5f), interPos + new Vector2(0f, 0.5f), Color.black, Mathf.Infinity);
+                Debug.DrawLine(interPos + new Vector2(0.5f, 0f), interPos + new Vector2(-0.5f, 0f), Color.black, Mathf.Infinity);
+            }
+        }
+    }
+
+    bool IsNewVertex(Vector2 newPos)
+    {
+        foreach (Scene5_Vertex ver in Scene5_DrawController.Instance.allVers)
+        {
+            if (Vector3.Distance(ver.transform.position, (Vector3)newPos) < 0.1f)
+                return false;
+        }
+        return true;
     }
 
     public void FindShortestPath()
@@ -89,7 +119,7 @@ public class Scene5_PathFinder : MonoBehaviour
         tempVer = end;
         while (parents.ContainsKey(tempVer))
         {
-            Debug.DrawLine(tempVer.transform.position, parents[tempVer].transform.position, Color.blue, 50f);
+            Debug.DrawLine(tempVer.transform.position, parents[tempVer].transform.position, Color.blue, Mathf.Infinity);
             tempVer = parents[tempVer];
         }
     }
@@ -143,7 +173,7 @@ public class Scene5_PathFinder : MonoBehaviour
                 {
                     FindPath(otherVer);
                 }
-                
+
                 if (visitedVertexs[visitedVertexs.Count - 1] == otherVer)
                 {
                     visitedVertexs.RemoveAt(visitedVertexs.Count - 1);

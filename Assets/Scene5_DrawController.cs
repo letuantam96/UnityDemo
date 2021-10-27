@@ -113,7 +113,10 @@ namespace Scene5
                 line.SetLength(CurrentLineInk);
                 line.SetVertex(null, tempVer);
 
+                Scene5_PathFinder.Instance.AddIntersect(line);
+
                 Scene5_PathFinder.Instance.LineCreated(line);
+                
             }
 
             UpdateInkTxt(currentInk);
