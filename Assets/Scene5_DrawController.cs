@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEditor;
 
 namespace Scene5
 {
@@ -96,7 +97,7 @@ namespace Scene5
 
         void OnReleasing()
         {
-            Scene5_Vertex tempVer = SnapMousePosIntoVertex();
+            Scene5_Vertex tempVer = FindNearestVertexToLine();
             if (!tempVer
                 || currentInk < CurrentLineInk
                 || CurrentLineInk <= 1f)
@@ -130,6 +131,30 @@ namespace Scene5
                 }
             }
             return null;
+        }
+
+        Scene5_Vertex FindNearestVertexToLine()
+        {
+            if (!currentLineRenderer) return null;
+
+            Vector2 mousePos = m_camera.ScreenToWorldPoint(Input.mousePosition);
+            Scene5_Vertex result = null;
+            float minDis = Mathf.Infinity;
+            foreach (Scene5_Vertex ver in allVers)
+            {
+                if (HandleUtility.DistancePointLine(ver.transform.position,
+                    currentLineRenderer.GetPosition(0),
+                    mousePos) < snapDistance)
+                {
+                    if (Vector3.Distance(currentLineRenderer.GetPosition(0), ver.transform.position) < minDis
+                        && Vector3.Distance(currentLineRenderer.GetPosition(0), ver.transform.position) > 0.1f)
+                    {
+                        result = ver;
+                        minDis = Vector3.Distance(currentLineRenderer.GetPosition(0), ver.transform.position);
+                    }
+                }
+            }
+            return result;
         }
 
         void UpdateInkTxt(float ink)
