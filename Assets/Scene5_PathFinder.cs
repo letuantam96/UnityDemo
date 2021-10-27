@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Scene5;
+using UnityEditor;
 
 public class Scene5_PathFinder : MonoBehaviour
 {
@@ -18,6 +19,13 @@ public class Scene5_PathFinder : MonoBehaviour
     // ALL PATH
     List<Scene5_Vertex> visitedVertexs = new List<Scene5_Vertex>();
     int count;
+
+
+    // AMBUSH
+    [SerializeField] float AMBUSH_DISTANCE;
+    [SerializeField] float AMBUSH_DISTOROAD;
+    List<Scene5_Ambush> ambushs = new List<Scene5_Ambush>();
+
 
     private void Awake()
     {
@@ -182,6 +190,67 @@ public class Scene5_PathFinder : MonoBehaviour
         }
     }
 
+
+
+
+
+    public void SearchAllAmbush()
+    {
+        //float DISTANCE = 1f;
+
+        ambushs.Clear();
+
+        foreach (Scene5_Line line in allLines)
+        {
+            float lineLenght = Vector2.Distance(line.start.transform.position, line.end.transform.position);
+            for (float dis = Random.Range(0f, 0.2f); dis < lineLenght; dis += AMBUSH_DISTANCE)
+            {
+                Vector2 pos = line.start.transform.position +
+                    (line.end.transform.position - line.start.transform.position).normalized * dis;
+
+                for (int i = -1; i <= 1; i+= 2)
+                {
+                    Vector2 normalVector = (line.end.transform.position - line.start.transform.position).normalized;
+                    normalVector = new Vector2(-normalVector.y, normalVector.x);
+
+                    Vector2 considerPos = pos + normalVector * i * AMBUSH_DISTOROAD;
+                    if (IsThisPosAvaiableForAmbush(line, considerPos))
+                    {
+                        ambushs.Add(new Scene5_Ambush(considerPos));
+
+                        Debug.DrawLine(considerPos + new Vector2(0.4f, 0.4f), considerPos + new Vector2(-0.4f, -0.4f), Color.yellow, Mathf.Infinity);
+                        Debug.DrawLine(considerPos + new Vector2(0.4f, -0.4f), considerPos + new Vector2(-0.4f, 0.4f), Color.yellow, Mathf.Infinity);
+                    }
+                }
+
+
+            }
+        }
+    }
+
+    public bool IsThisPosAvaiableForAmbush(Scene5_Line line, Vector2 pos)
+    {
+        foreach (Scene5_Line otherLine in allLines)
+        {
+            if (otherLine != line)
+            {
+                if (HandleUtility.DistancePointLine((Vector3) pos, otherLine.start.transform.position, otherLine.end.transform.position) < AMBUSH_DISTOROAD)
+                {
+                    return false;
+                }
+            }
+        }
+
+        foreach (Scene5_Ambush ambush in ambushs)
+        {
+            if (Vector2.Distance(ambush.pos, pos) < AMBUSH_DISTANCE - 0.01f)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
 }
 
 public class Path

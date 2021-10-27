@@ -29,5 +29,10 @@ namespace Scene5
         {
             Scene5_PathFinder.Instance.FindAllPaths();
         }
+
+        public void AmbushBtnPressed()
+        {
+            Scene5_PathFinder.Instance.SearchAllAmbush();
+        }
     }
 }
