@@ -203,7 +203,7 @@ public class Scene5_PathFinder : MonoBehaviour
         foreach (Scene5_Line line in allLines)
         {
             float lineLenght = Vector2.Distance(line.start.transform.position, line.end.transform.position);
-            for (float dis = Random.Range(0f, 0.2f); dis < lineLenght; dis += AMBUSH_DISTANCE)
+            for (float dis = Random.Range(0f, 0.1f) - AMBUSH_DISTANCE; dis < lineLenght + AMBUSH_DISTANCE; dis += 0.1f)
             {
                 Vector2 pos = line.start.transform.position +
                     (line.end.transform.position - line.start.transform.position).normalized * dis;

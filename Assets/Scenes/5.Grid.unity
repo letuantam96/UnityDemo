@@ -461,7 +461,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3eb81fe6e0db74441bc4286cf8ed2192, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AMBUSH_DISTANCE: 1.5
+  AMBUSH_DISTANCE: 1.3
   AMBUSH_DISTOROAD: 1.2
 --- !u!4 &237695743
 Transform:
