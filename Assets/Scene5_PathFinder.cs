@@ -236,10 +236,13 @@ public class Scene5_PathFinder : MonoBehaviour
 
         Debug.Log($"FindShortestPath: {distance[end]}");
         // draw
+        Scene5_Controller.Instance.ClearDebugPaths();
         tempVer = end;
         while (parents.ContainsKey(tempVer))
         {
-            Debug.DrawLine(tempVer.transform.position, parents[tempVer].transform.position, Color.blue, Mathf.Infinity);
+            //Debug.DrawLine(tempVer.transform.position, parents[tempVer].transform.position, Color.blue, Mathf.Infinity);
+
+            Scene5_Controller.Instance.DrawOneDebugPath(tempVer.transform.position, parents[tempVer].transform.position);
             tempVer = parents[tempVer];
         }
     }

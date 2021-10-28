@@ -8,6 +8,7 @@ namespace Scene5
 {
     public class Scene5_Controller : MonoBehaviour
     {
+        public static Scene5_Controller Instance;
         int iPath = 0;
         List<List<Scene5_Vertex>> allPaths;
         List<float> allLenghts;
@@ -19,6 +20,8 @@ namespace Scene5
 
         private void Awake()
         {
+            Instance = this;
+
             allPaths = Scene5_PathFinder.Instance.allPaths;
             allLenghts = Scene5_PathFinder.Instance.allLenghts;
             allProbality = Scene5_PathFinder.Instance.allProbality;
@@ -71,11 +74,8 @@ namespace Scene5
 
         void DrawDebugPath()
         {
-            // clear
-            foreach (Transform child in debugPathTrf)
-            {
-                Destroy(child.gameObject);
-            }
+
+            ClearDebugPaths();
 
             string sPath = "";
 
@@ -83,17 +83,7 @@ namespace Scene5
 
             for (int i = 0; i < path.Count - 1; i++)
             {
-                GameObject debugInstance = Instantiate(debugLinePrefab, debugPathTrf);
-                LineRenderer lineRen = debugInstance.GetComponent<LineRenderer>();
-
-                lineRen.SetPosition(0, path[i].transform.position);
-                lineRen.SetPosition(1, path[i + 1].transform.position);
-
-                TMP_Text txt = debugInstance.transform.GetChild(0).GetComponent<TMP_Text>();
-                float lenght = Vector3.Distance(lineRen.GetPosition(0), lineRen.GetPosition(1));
-                txt.text = $"{lenght.ToString("F1")}";
-                Vector3 pos = (lineRen.GetPosition(0) + lineRen.GetPosition(1)) * 0.5f;
-                txt.transform.position = pos;
+                DrawOneDebugPath(path[i].transform.position, path[i + 1].transform.position);
 
                 sPath = sPath + path[i].name.ToString() + " -> ";
             }
@@ -101,6 +91,32 @@ namespace Scene5
             pathCountTxt.text = $"{iPath + 1}/{allPaths.Count}";
             //Debug.Log("Path: " + sPath);
             pathInfoTxt.text = $"Len: {allLenghts[iPath].ToString("F1")}\nPro: {(100f * allProbality[iPath]).ToString("F1")}%";
+        }
+
+
+        public void DrawOneDebugPath(Vector3 start, Vector3 end)
+        {
+            GameObject debugInstance = Instantiate(debugLinePrefab, debugPathTrf);
+            LineRenderer lineRen = debugInstance.GetComponent<LineRenderer>();
+
+            lineRen.SetPosition(0, start);
+            lineRen.SetPosition(1, end);
+
+            TMP_Text txt = debugInstance.transform.GetChild(0).GetComponent<TMP_Text>();
+            float lenght = Vector3.Distance(start, end);
+            txt.text = $"{lenght.ToString("F1")}";
+            Vector3 pos = (start + end) * 0.5f;
+            txt.transform.position = pos;
+        }
+
+
+        public void ClearDebugPaths()
+        {
+            // clear
+            foreach (Transform child in debugPathTrf)
+            {
+                Destroy(child.gameObject);
+            }
         }
     }
 }
