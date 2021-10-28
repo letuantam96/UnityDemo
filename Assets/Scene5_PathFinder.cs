@@ -137,7 +137,9 @@ public class Scene5_PathFinder : MonoBehaviour
         }
         allvers.Add(line.end);
 
-        allvers.OrderBy(x => Vector3.Distance(x.transform.position, line.start.transform.position));
+        //Debug.Log("Before: " + PrinDebug(allvers));
+        allvers = allvers.OrderBy(x => Vector3.Distance(x.transform.position, line.start.transform.position)).ToList();
+        //Debug.Log("After: " + PrinDebug(allvers));
 
         foreach (Scene5_Vertex ver in allvers)
         {
@@ -158,7 +160,11 @@ public class Scene5_PathFinder : MonoBehaviour
                     connectVers[allvers[i]].Remove(allvers[j]);
                 }
             }
+        }
 
+        // re-add
+        for (int i = 0; i < allvers.Count; i++)
+        {
             if (i < allvers.Count - 1)
             {
                 connectVers[allvers[i]].Add(allvers[i + 1]);
@@ -172,7 +178,15 @@ public class Scene5_PathFinder : MonoBehaviour
     }
 
 
-
+    string PrinDebug(List<Scene5_Vertex> allvers)
+    {
+        string s = "";
+        foreach (var ver in allvers)
+        {
+            s = s + ver.name + " > ";
+        }
+        return s;
+    }
 
 
 
@@ -339,7 +353,7 @@ public class Scene5_PathFinder : MonoBehaviour
         List<Vector3> allVertexAndIntersecs = new List<Vector3>();
         foreach (Scene5_Vertex ver in Scene5_DrawController.Instance.allOriginVers) allVertexAndIntersecs.Add(ver.transform.position);
         foreach (Scene5_Vertex inter in intersecs) allVertexAndIntersecs.Add(inter.transform.position);
-        allVertexAndIntersecs.OrderBy(x => x.x);
+        allVertexAndIntersecs = allVertexAndIntersecs.OrderBy(x => x.x).ToList();
         foreach (Vector3 ver in allVertexAndIntersecs)
         {
             for (float angle = 0f; angle < 2f * Mathf.PI; angle += 2f * Mathf.PI / 360f)

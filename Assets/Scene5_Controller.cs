@@ -94,7 +94,7 @@ namespace Scene5
             }
 
             pathCountTxt.text = $"{iPath + 1}/{allPaths.Count}";
-            Debug.Log("Path: " + sPath);
+            //Debug.Log("Path: " + sPath);
         }
     }
 }
