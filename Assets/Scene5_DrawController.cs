@@ -112,7 +112,7 @@ namespace Scene5
                 currentLineRenderer.SetPosition(1, tempVer.transform.position);
                 currentInk -= CurrentLineInk;
                 Scene5_Line line = currentLineRenderer.gameObject.GetComponent<Scene5_Line>();
-                line.SetLength(CurrentLineInk);
+                //line.SetLength(CurrentLineInk);
                 line.SetVertex(null, tempVer);
 
                 Scene5_PathFinder.Instance.allLines.Add(line);
