@@ -40,6 +40,7 @@ namespace Scene5
         public void AllPathBtnPressed()
         {
             Scene5_PathFinder.Instance.FindAllPaths();
+            iPath = 0;
             DrawDebugPath();
         }
 
@@ -59,7 +60,7 @@ namespace Scene5
         public void PreviousPathBtnPressed()
         {
             if (allPaths.Count == 0) return;
-            iPath = (iPath - 1) % allPaths.Count;
+            iPath = (iPath - 1 + allPaths.Count) % allPaths.Count;
             DrawDebugPath();
         }
 
@@ -94,7 +95,6 @@ namespace Scene5
 
             pathCountTxt.text = $"{iPath + 1}/{allPaths.Count}";
             Debug.Log("Path: " + sPath);
-
         }
     }
 }

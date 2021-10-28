@@ -96,6 +96,7 @@ public class Scene5_PathFinder : MonoBehaviour
 
                 GameObject interObj = Instantiate(vertexPrefab, Scene5_DrawController.Instance.vertexsTrf);
                 Scene5_Vertex inter = interObj.GetComponent<Scene5_Vertex>();
+                
                 inter.transform.position = interPos;
                 
                 inter.type = VertexType.Intersec;
@@ -103,6 +104,8 @@ public class Scene5_PathFinder : MonoBehaviour
                 line.intersecs.Add(inter);
                 otherLine.intersecs.Add(inter);
                 intersecs.Add(inter);
+
+                interObj.name = $"inter {intersecs.Count - 1}";
             }
 
             UpdateConnectVertex(line);
