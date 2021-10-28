@@ -24,6 +24,8 @@ public class Scene5_PathFinder : MonoBehaviour
     // ALL PATH
     List<Scene5_Vertex> visitedVertexs = new List<Scene5_Vertex>();
     public List<List<Scene5_Vertex>> allPaths = new List<List<Scene5_Vertex>>();
+    public List<float> allLenghts = new List<float>();
+    public List<float> allProbality = new List<float>();
     int count;
 
 
@@ -274,6 +276,8 @@ public class Scene5_PathFinder : MonoBehaviour
 
         FindPath(start);
         Debug.Log($"FindAllPaths: {count}");
+
+        FindProbalityAllPath();
     }
 
     void FindPath(Scene5_Vertex ver)
@@ -305,6 +309,41 @@ public class Scene5_PathFinder : MonoBehaviour
     }
 
 
+
+    void FindProbalityAllPath()
+    {
+        allLenghts.Clear();
+        allProbality.Clear();
+
+        // a(i)
+        for (int i = 0; i < allPaths.Count; i++)
+        {
+            float len = 0f;
+            var path = allPaths[i];
+            for (int j = 0; j < path.Count - 1; j++)
+            {
+                len += Vector3.Distance(path[j].transform.position, path[j + 1].transform.position);
+            }
+            allLenghts.Add(len);
+        }
+
+        float sumLen = allLenghts.Sum(x => x);
+
+        // bi
+        List<float> bHarmean = new List<float>();
+        foreach (float len in allLenghts)
+        {
+            bHarmean.Add((sumLen + len) / (2f * sumLen * len));
+        }
+
+        float sumHarmean = bHarmean.Sum(x => x);
+
+        // probality
+        foreach (float b in bHarmean)
+        {
+            allProbality.Add(b / sumHarmean);
+        }
+    }
 
 
 

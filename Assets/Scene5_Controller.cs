@@ -10,13 +10,18 @@ namespace Scene5
     {
         int iPath = 0;
         List<List<Scene5_Vertex>> allPaths;
+        List<float> allLenghts;
+        List<float> allProbality;
         [SerializeField] GameObject debugLinePrefab;
         [SerializeField] Transform debugPathTrf;
         [SerializeField] TMP_Text pathCountTxt;
+        [SerializeField] TMP_Text pathInfoTxt;
 
         private void Awake()
         {
             allPaths = Scene5_PathFinder.Instance.allPaths;
+            allLenghts = Scene5_PathFinder.Instance.allLenghts;
+            allProbality = Scene5_PathFinder.Instance.allProbality;
         }
 
         public void ClearBtnPressed()
@@ -95,6 +100,7 @@ namespace Scene5
 
             pathCountTxt.text = $"{iPath + 1}/{allPaths.Count}";
             //Debug.Log("Path: " + sPath);
+            pathInfoTxt.text = $"Len: {allLenghts[iPath].ToString("F1")}\nPro: {(100f * allProbality[iPath]).ToString("F0")}%";
         }
     }
 }

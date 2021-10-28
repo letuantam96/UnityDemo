@@ -542,6 +542,8 @@ MonoBehaviour:
   allLines: []
   vertexPrefab: {fileID: 5090335997822444761, guid: cc99a21d950e90a478fc9baff6f9023c,
     type: 3}
+  allLenghts: []
+  allProbality: []
   AMBUSH_DISTANCE: 1.3
   AMBUSH_DISTOROAD: 1.2
 --- !u!4 &237695743
@@ -606,6 +608,7 @@ MonoBehaviour:
     type: 3}
   debugPathTrf: {fileID: 2075352900}
   pathCountTxt: {fileID: 1013814616}
+  pathInfoTxt: {fileID: 947278321}
 --- !u!114 &307509081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1570,7 +1573,7 @@ GameObject:
   - component: {fileID: 947278322}
   - component: {fileID: 947278321}
   m_Layer: 0
-  m_Name: pathCountTxt (1)
+  m_Name: pathInfoTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
