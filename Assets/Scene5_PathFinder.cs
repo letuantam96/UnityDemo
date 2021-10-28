@@ -32,6 +32,8 @@ public class Scene5_PathFinder : MonoBehaviour
     [SerializeField] float AMBUSH_DISTANCE;
     [SerializeField] float AMBUSH_DISTOROAD;
     List<Scene5_Ambush> ambushs = new List<Scene5_Ambush>();
+    [SerializeField] GameObject ambushPrefab;
+    [SerializeField] Transform ambushTrf;
 
 
     private void Awake()
@@ -380,8 +382,12 @@ public class Scene5_PathFinder : MonoBehaviour
                     {
                         ambushs.Add(new Scene5_Ambush(considerPos));
 
-                        Debug.DrawLine(considerPos + new Vector2(0.4f, 0.4f), considerPos + new Vector2(-0.4f, -0.4f), Color.yellow, Mathf.Infinity);
-                        Debug.DrawLine(considerPos + new Vector2(0.4f, -0.4f), considerPos + new Vector2(-0.4f, 0.4f), Color.yellow, Mathf.Infinity);
+                        // create 
+                        var ambushOb = Instantiate(ambushPrefab, ambushTrf);
+                        ambushOb.transform.position = considerPos;
+
+                        //Debug.DrawLine(considerPos + new Vector2(0.4f, 0.4f), considerPos + new Vector2(-0.4f, -0.4f), Color.yellow, Mathf.Infinity);
+                        //Debug.DrawLine(considerPos + new Vector2(0.4f, -0.4f), considerPos + new Vector2(-0.4f, 0.4f), Color.yellow, Mathf.Infinity);
                     }
                 }
 
@@ -405,8 +411,12 @@ public class Scene5_PathFinder : MonoBehaviour
                 {
                     ambushs.Add(new Scene5_Ambush(considerPos));
 
-                    Debug.DrawLine(considerPos + new Vector2(0.4f, 0.4f), considerPos + new Vector2(-0.4f, -0.4f), Color.yellow, Mathf.Infinity);
-                    Debug.DrawLine(considerPos + new Vector2(0.4f, -0.4f), considerPos + new Vector2(-0.4f, 0.4f), Color.yellow, Mathf.Infinity);
+                    // create 
+                    var ambushOb = Instantiate(ambushPrefab, ambushTrf);
+                    ambushOb.transform.position = considerPos;
+
+                    //Debug.DrawLine(considerPos + new Vector2(0.4f, 0.4f), considerPos + new Vector2(-0.4f, -0.4f), Color.yellow, Mathf.Infinity);
+                    //Debug.DrawLine(considerPos + new Vector2(0.4f, -0.4f), considerPos + new Vector2(-0.4f, 0.4f), Color.yellow, Mathf.Infinity);
                 }
 
             }
