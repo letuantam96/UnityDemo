@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Scene5;
 using UnityEditor;
+using System.Linq;
 
 public class Scene5_PathFinder : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class Scene5_PathFinder : MonoBehaviour
     Scene5_Vertex end;
 
     List<Scene5_Line> allLines = new List<Scene5_Line>();
+    List<Vector3> intersecs = new List<Vector3>();
 
 
     // ALL PATH
@@ -71,6 +73,7 @@ public class Scene5_PathFinder : MonoBehaviour
                 Debug.Log($"new point: {interPos}");
                 Debug.DrawLine(interPos + new Vector2(0f, -0.5f), interPos + new Vector2(0f, 0.5f), Color.black, Mathf.Infinity);
                 Debug.DrawLine(interPos + new Vector2(0.5f, 0f), interPos + new Vector2(-0.5f, 0f), Color.black, Mathf.Infinity);
+                intersecs.Add(interPos);
             }
         }
     }
@@ -200,20 +203,27 @@ public class Scene5_PathFinder : MonoBehaviour
 
         ambushs.Clear();
 
-        foreach (Scene5_Line line in allLines)
+        List<Scene5_Line> sortedList = allLines.OrderBy(x => x.start.transform.position.x).ThenBy(x => x.end.transform.position.x).ToList();
+
+        Vector2 considerPos;
+
+        // follow line
+        foreach (Scene5_Line line in sortedList)
         {
-            float lineLenght = Vector2.Distance(line.start.transform.position, line.end.transform.position);
-            for (float dis = Random.Range(0f, 0.1f) - AMBUSH_DISTANCE; dis < lineLenght + AMBUSH_DISTANCE; dis += 0.1f)
+            Vector3 start, end;
+            start = line.start.transform.position.x < line.end.transform.position.x ? line.start.transform.position : line.end.transform.position;
+            end = line.start.transform.position.x < line.end.transform.position.x ? line.end.transform.position : line.start.transform.position;
+            float lineLenght = Vector2.Distance(start, end);
+            for (float dis = Random.Range(0f, 0.1f) - 0.5f; dis < lineLenght + 0.5f; dis += 0.1f)
             {
-                Vector2 pos = line.start.transform.position +
-                    (line.end.transform.position - line.start.transform.position).normalized * dis;
+                Vector2 pos = start + (end - start).normalized * dis;
 
                 for (int i = -1; i <= 1; i+= 2)
                 {
-                    Vector2 normalVector = (line.end.transform.position - line.start.transform.position).normalized;
+                    Vector2 normalVector = (end - start).normalized;
                     normalVector = new Vector2(-normalVector.y, normalVector.x);
 
-                    Vector2 considerPos = pos + normalVector * i * AMBUSH_DISTOROAD;
+                    considerPos = pos + normalVector * i * AMBUSH_DISTOROAD;
                     if (IsThisPosAvaiableForAmbush(line, considerPos))
                     {
                         ambushs.Add(new Scene5_Ambush(considerPos));
@@ -223,6 +233,29 @@ public class Scene5_PathFinder : MonoBehaviour
                     }
                 }
 
+
+            }
+        }
+
+
+        // follow 2 point
+        List<Vector3> allVertexAndIntersecs = new List<Vector3>();
+        foreach (Scene5_Vertex ver in Scene5_DrawController.Instance.allVers) allVertexAndIntersecs.Add(ver.transform.position);
+        foreach (Vector3 inter in intersecs) allVertexAndIntersecs.Add(inter);
+        allVertexAndIntersecs.OrderBy(x => x.x);
+        foreach (Vector3 ver in allVertexAndIntersecs)
+        {
+            for (float angle = 0f; angle < 2f * Mathf.PI; angle += 2f * Mathf.PI / 360f)
+            {
+                Vector2 chiPhuong = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
+                considerPos = (Vector2)ver + chiPhuong.normalized * AMBUSH_DISTOROAD;
+                if (IsThisPosAvaiableForAmbush(null, considerPos))
+                {
+                    ambushs.Add(new Scene5_Ambush(considerPos));
+
+                    Debug.DrawLine(considerPos + new Vector2(0.4f, 0.4f), considerPos + new Vector2(-0.4f, -0.4f), Color.yellow, Mathf.Infinity);
+                    Debug.DrawLine(considerPos + new Vector2(0.4f, -0.4f), considerPos + new Vector2(-0.4f, 0.4f), Color.yellow, Mathf.Infinity);
+                }
 
             }
         }
