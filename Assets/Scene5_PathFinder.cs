@@ -4,18 +4,21 @@ using UnityEngine;
 using Scene5;
 using UnityEditor;
 using System.Linq;
+using System;
 
 public class Scene5_PathFinder : MonoBehaviour
 {
     public static Scene5_PathFinder Instance;
 
     List<Path> paths = new List<Path>();
-    Dictionary<Scene5_Vertex, List<Scene5_Line>> connectLines = new Dictionary<Scene5_Vertex, List<Scene5_Line>>();
+    //Dictionary<Scene5_Vertex, List<Scene5_Line>> connectLines = new Dictionary<Scene5_Vertex, List<Scene5_Line>>();
+    Dictionary<Scene5_Vertex, List<Scene5_Vertex>> connectVers = new Dictionary<Scene5_Vertex, List<Scene5_Vertex>>();
     Scene5_Vertex start;
     Scene5_Vertex end;
 
-    List<Scene5_Line> allLines = new List<Scene5_Line>();
-    List<Vector3> intersecs = new List<Vector3>();
+    public List<Scene5_Line> allLines = new List<Scene5_Line>();
+    List<Scene5_Vertex> intersecs = new List<Scene5_Vertex>();
+    [SerializeField] GameObject vertexPrefab;
 
 
     // ALL PATH
@@ -40,28 +43,44 @@ public class Scene5_PathFinder : MonoBehaviour
         end = Scene5_DrawController.Instance.end;
     }
 
-    public void LineCreated(Scene5_Line line)
-    {
-        AddLineTo(line.start, line);
-        AddLineTo(line.end, line);
-        allLines.Add(line);
-    }
+    //public void LineCreated(Scene5_Line line)
+    //{
+    //    //AddLineTo(line.start, line);
+    //    //AddLineTo(line.end, line);
+    //    AddVerTo(line.start, line.end);
+    //    AddVerTo(line.start, line.end);
+    //    allLines.Add(line);
+    //}
 
-    void AddLineTo(Scene5_Vertex ver, Scene5_Line line)
-    {
-        if (!connectLines.ContainsKey(ver))
-        {
-            connectLines.Add(ver, new List<Scene5_Line>());
-        }
+    //void AddVerTo(Scene5_Vertex ver, Scene5_Vertex otherVer)
+    //{
+    //    if (!connectVers.ContainsKey(ver))
+    //    {
+    //        connectVers.Add(ver, new List<Scene5_Vertex>());
+    //    }
 
-        if (!connectLines[ver].Contains(line))
-        {
-            connectLines[ver].Add(line);
-        }
-    }
+    //    if (!connectVers[ver].Contains(otherVer))
+    //    {
+    //        connectVers[ver].Add(otherVer);
+    //    }
+    //}
+
+    //void AddLineTo(Scene5_Vertex ver, Scene5_Line line)
+    //{
+    //    if (!connectLines.ContainsKey(ver))
+    //    {
+    //        connectLines.Add(ver, new List<Scene5_Line>());
+    //    }
+
+    //    if (!connectLines[ver].Contains(line))
+    //    {
+    //        connectLines[ver].Add(line);
+    //    }
+    //}
 
     public void AddIntersect(Scene5_Line line)
     {
+        //Debug.Log("AddIntersect");
         foreach (Scene5_Line otherLine in allLines)
         {
             Vector2 interPos = new Vector2();
@@ -73,14 +92,24 @@ public class Scene5_PathFinder : MonoBehaviour
                 Debug.Log($"new point: {interPos}");
                 Debug.DrawLine(interPos + new Vector2(0f, -0.5f), interPos + new Vector2(0f, 0.5f), Color.black, Mathf.Infinity);
                 Debug.DrawLine(interPos + new Vector2(0.5f, 0f), interPos + new Vector2(-0.5f, 0f), Color.black, Mathf.Infinity);
-                intersecs.Add(interPos);
+
+                GameObject interObj = Instantiate(vertexPrefab, Scene5_DrawController.Instance.vertexsTrf);
+                Scene5_Vertex inter = interObj.GetComponent<Scene5_Vertex>();
+                inter.type = VertexType.Intersec;
+
+                line.intersecs.Add(inter);
+                otherLine.intersecs.Add(inter);
+                intersecs.Add(inter);
             }
+
+            UpdateConnectVertex(line);
+            UpdateConnectVertex(otherLine);
         }
     }
 
     bool IsNewVertex(Vector2 newPos)
     {
-        foreach (Scene5_Vertex ver in Scene5_DrawController.Instance.allVers)
+        foreach (Scene5_Vertex ver in Scene5_DrawController.Instance.allOriginVers)
         {
             if (Vector3.Distance(ver.transform.position, (Vector3)newPos) < 0.1f)
                 return false;
@@ -88,14 +117,72 @@ public class Scene5_PathFinder : MonoBehaviour
         return true;
     }
 
+
+
+
+    void UpdateConnectVertex(Scene5_Line line)
+    {
+        //Debug.Log("UpdateConnectVertex");
+        List<Scene5_Vertex> allvers = new List<Scene5_Vertex>();
+        allvers.Add(line.start);
+        if (line.intersecs.Count > 0)
+        {
+            allvers.AddRange(line.intersecs);
+        }
+        allvers.Add(line.end);
+
+        allvers.OrderBy(x => Vector3.Distance(x.transform.position, line.start.transform.position));
+
+        foreach (Scene5_Vertex ver in allvers)
+        {
+            //Debug.Log("adding ..." + ver);
+            if (!connectVers.ContainsKey(ver))
+            {
+                connectVers.Add(ver, new List<Scene5_Vertex>());
+            }
+        }
+
+        //clear
+        for (int i = 0; i < allvers.Count; i++)
+        {
+            for (int j = 0; j < allvers.Count; j++)
+            {
+                if (connectVers[allvers[i]].Contains(allvers[j]))
+                {
+                    connectVers[allvers[i]].Remove(allvers[j]);
+                }
+            }
+
+            if (i < allvers.Count - 1)
+            {
+                connectVers[allvers[i]].Add(allvers[i + 1]);
+            }
+
+            if (i > 0)
+            {
+                connectVers[allvers[i]].Add(allvers[i - 1]);
+            }
+        }
+    }
+
+
+
+
+
+
+
+
+
     public void FindShortestPath()
     {
         Dictionary<Scene5_Vertex, float> distance = new Dictionary<Scene5_Vertex, float>();
         List<Scene5_Vertex> greenNodes = new List<Scene5_Vertex>();
         Dictionary<Scene5_Vertex, Scene5_Vertex> parents = new Dictionary<Scene5_Vertex, Scene5_Vertex>();
-        Dictionary<Scene5_Vertex, Scene5_Line> parentLine = new Dictionary<Scene5_Vertex, Scene5_Line>();
 
-        foreach (var ver in Scene5_DrawController.Instance.allVers)
+        List<Scene5_Vertex> allVers = new List<Scene5_Vertex>(Scene5_DrawController.Instance.allOriginVers);
+        allVers.AddRange(intersecs);
+
+        foreach (var ver in allVers)
         {
             distance.Add(ver, Mathf.Infinity);
         }
@@ -105,19 +192,20 @@ public class Scene5_PathFinder : MonoBehaviour
 
         while (tempVer = GetMinVertex(distance, greenNodes))
         {
-            //Debug.Log($"tempVer: {tempVer}");
+            Debug.Log($"tempVer: {tempVer}");
             greenNodes.Add(tempVer);
-            foreach (Scene5_Line line in connectLines[tempVer])
+            foreach (Scene5_Vertex otherVer in connectVers[tempVer])
             {
-                Scene5_Vertex otherVer = GetOtherVer(tempVer, line);
+                //Scene5_Vertex otherVer = GetOtherVer(tempVer, line);
                 if (!greenNodes.Contains(otherVer))
                 {
+                    float lenght = Vector3.Distance(tempVer.transform.position, otherVer.transform.position);
+
                     //Debug.Log($"otherVer: {otherVer}");
-                    if (distance[tempVer] + line.lenght < distance[otherVer])
+                    if (distance[tempVer] + lenght < distance[otherVer])
                     {
                         parents[otherVer] = tempVer;
-                        parentLine[otherVer] = line;
-                        distance[otherVer] = distance[tempVer] + line.lenght;
+                        distance[otherVer] = distance[tempVer] + lenght;
                     }
                     //Debug.Log($"distance[otherVer]: {distance[otherVer]}");
                 }
@@ -171,9 +259,9 @@ public class Scene5_PathFinder : MonoBehaviour
     {
         visitedVertexs.Add(ver);
         //Debug.Log("visitedVertexs: " + visitedVertexs.Count);
-        foreach (Scene5_Line line in connectLines[ver])
+        foreach (Scene5_Vertex otherVer in connectVers[ver])
         {
-            Scene5_Vertex otherVer = GetOtherVer(ver, line);
+            //Scene5_Vertex otherVer = GetOtherVer(ver, line);
             if (!visitedVertexs.Contains(otherVer))
             {
                 if (otherVer == end)
@@ -214,11 +302,11 @@ public class Scene5_PathFinder : MonoBehaviour
             start = line.start.transform.position.x < line.end.transform.position.x ? line.start.transform.position : line.end.transform.position;
             end = line.start.transform.position.x < line.end.transform.position.x ? line.end.transform.position : line.start.transform.position;
             float lineLenght = Vector2.Distance(start, end);
-            for (float dis = Random.Range(0f, 0.1f) - 0.5f; dis < lineLenght + 0.5f; dis += 0.1f)
+            for (float dis = -0.5f; dis < lineLenght + 0.5f; dis += 0.1f)
             {
                 Vector2 pos = start + (end - start).normalized * dis;
 
-                for (int i = -1; i <= 1; i+= 2)
+                for (int i = -1; i <= 1; i += 2)
                 {
                     Vector2 normalVector = (end - start).normalized;
                     normalVector = new Vector2(-normalVector.y, normalVector.x);
@@ -240,8 +328,8 @@ public class Scene5_PathFinder : MonoBehaviour
 
         // follow 2 point
         List<Vector3> allVertexAndIntersecs = new List<Vector3>();
-        foreach (Scene5_Vertex ver in Scene5_DrawController.Instance.allVers) allVertexAndIntersecs.Add(ver.transform.position);
-        foreach (Vector3 inter in intersecs) allVertexAndIntersecs.Add(inter);
+        foreach (Scene5_Vertex ver in Scene5_DrawController.Instance.allOriginVers) allVertexAndIntersecs.Add(ver.transform.position);
+        foreach (Scene5_Vertex inter in intersecs) allVertexAndIntersecs.Add(inter.transform.position);
         allVertexAndIntersecs.OrderBy(x => x.x);
         foreach (Vector3 ver in allVertexAndIntersecs)
         {
@@ -267,7 +355,7 @@ public class Scene5_PathFinder : MonoBehaviour
         {
             if (otherLine != line)
             {
-                if (HandleUtility.DistancePointLine((Vector3) pos, otherLine.start.transform.position, otherLine.end.transform.position) < AMBUSH_DISTOROAD)
+                if (HandleUtility.DistancePointLine((Vector3)pos, otherLine.start.transform.position, otherLine.end.transform.position) < AMBUSH_DISTOROAD)
                 {
                     return false;
                 }

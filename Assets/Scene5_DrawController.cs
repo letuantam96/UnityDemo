@@ -14,12 +14,13 @@ namespace Scene5
         public Scene5_Vertex start;
         public Scene5_Vertex end;
         public List<Scene5_Vertex> vers = new List<Scene5_Vertex>();
-        public List<Scene5_Vertex> allVers;
+        public List<Scene5_Vertex> allOriginVers;
 
         [Header("Other")]
         public Camera m_camera;
         public GameObject brush;
         public Transform paths;
+        public Transform vertexsTrf;
         LineRenderer currentLineRenderer;
         public TMP_Text inkTxt;
 
@@ -37,9 +38,9 @@ namespace Scene5
 
         private void Start()
         {
-            allVers = new List<Scene5_Vertex>(vers);
-            allVers.Add(start);
-            allVers.Add(end);
+            allOriginVers = new List<Scene5_Vertex>(vers);
+            allOriginVers.Add(start);
+            allOriginVers.Add(end);
 
             currentInk = maxInk;
         }
@@ -114,9 +115,10 @@ namespace Scene5
                 line.SetLength(CurrentLineInk);
                 line.SetVertex(null, tempVer);
 
+                Scene5_PathFinder.Instance.allLines.Add(line);
                 Scene5_PathFinder.Instance.AddIntersect(line);
 
-                Scene5_PathFinder.Instance.LineCreated(line);
+                //Scene5_PathFinder.Instance.LineCreated(line);
                 
             }
 
@@ -128,13 +130,9 @@ namespace Scene5
                 // create new
                 GameObject brushInstance = Instantiate(brush, paths);
                 currentLineRenderer = brushInstance.GetComponent<LineRenderer>();
-
-                //because you gotta have 2 points to start a line renderer, 
                 Vector2 mousePos = m_camera.ScreenToWorldPoint(Input.mousePosition);
-
                 currentLineRenderer.SetPosition(0, tempVer.transform.position);
                 currentLineRenderer.SetPosition(1, mousePos);
-
                 currentLineRenderer.gameObject.GetComponent<Scene5_Line>().SetVertex(tempVer, null);
 
                 OnReleasing();
@@ -146,7 +144,7 @@ namespace Scene5
         Scene5_Vertex SnapMousePosIntoVertex()
         {
             Vector2 mousePos = m_camera.ScreenToWorldPoint(Input.mousePosition);
-            foreach (Scene5_Vertex ver in allVers)
+            foreach (Scene5_Vertex ver in allOriginVers)
             {
                 if (Vector3.Distance(ver.gameObject.transform.position, mousePos) <= snapDistance)
                 {
@@ -163,7 +161,7 @@ namespace Scene5
             Vector2 mousePos = m_camera.ScreenToWorldPoint(Input.mousePosition);
             Scene5_Vertex result = null;
             float minDis = Mathf.Infinity;
-            foreach (Scene5_Vertex ver in allVers)
+            foreach (Scene5_Vertex ver in allOriginVers)
             {
                 if (HandleUtility.DistancePointLine(ver.transform.position,
                     currentLineRenderer.GetPosition(0),

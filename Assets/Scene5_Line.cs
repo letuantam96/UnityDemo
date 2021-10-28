@@ -10,6 +10,7 @@ public class Scene5_Line : MonoBehaviour
     public Scene5_Vertex start = null;
     public Scene5_Vertex end = null;
     public float lenght = 0f;
+    public List<Scene5_Vertex> intersecs;
 
     private void Awake()
     {
