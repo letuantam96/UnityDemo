@@ -17,4 +17,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/4.Terrain.unity
     guid: 409ae16d5058d4a45a0651bbacd1cec2
+  - enabled: 1
+    path: Assets/Scenes/5.Grid.unity
+    guid: 81e41ffc8557b4449bf720bd708eb04a
   m_configObjects: {}

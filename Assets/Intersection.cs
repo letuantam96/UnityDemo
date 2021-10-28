@@ -171,4 +171,23 @@ public class Intersection : MonoBehaviour
         return true;
 
     }
+
+
+
+    public float DistancePointToLine(Vector3 point, Vector3 start, Vector3 end)
+    {
+        return Vector3.Distance(point, NearestPointOnFiniteLine(start, end, point));
+    }
+
+    Vector3 NearestPointOnFiniteLine(Vector3 start, Vector3 end, Vector3 pnt)
+    {
+        var line = (end - start);
+        var len = line.magnitude;
+        line.Normalize();
+
+        var v = pnt - start;
+        var d = Vector3.Dot(v, line);
+        d = Mathf.Clamp(d, 0f, len);
+        return start + line * d;
+    }
 }

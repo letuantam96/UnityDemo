@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Scene5;
-using UnityEditor;
 using System.Linq;
 using System;
 
@@ -240,7 +239,7 @@ public class Scene5_PathFinder : MonoBehaviour
         tempVer = end;
         while (parents.ContainsKey(tempVer))
         {
-            Debug.DrawLine(tempVer.transform.position, parents[tempVer].transform.position, Color.blue, 1f);
+            Debug.DrawLine(tempVer.transform.position, parents[tempVer].transform.position, Color.blue, Mathf.Infinity);
             tempVer = parents[tempVer];
         }
     }
@@ -417,7 +416,7 @@ public class Scene5_PathFinder : MonoBehaviour
         {
             if (otherLine != line)
             {
-                if (HandleUtility.DistancePointLine((Vector3)pos, otherLine.start.transform.position, otherLine.end.transform.position) < AMBUSH_DISTOROAD)
+                if (Intersection.Instance.DistancePointToLine((Vector3)pos, otherLine.start.transform.position, otherLine.end.transform.position) < AMBUSH_DISTOROAD)
                 {
                     return false;
                 }

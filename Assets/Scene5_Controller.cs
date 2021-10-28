@@ -100,7 +100,7 @@ namespace Scene5
 
             pathCountTxt.text = $"{iPath + 1}/{allPaths.Count}";
             //Debug.Log("Path: " + sPath);
-            pathInfoTxt.text = $"Len: {allLenghts[iPath].ToString("F1")}\nPro: {(100f * allProbality[iPath]).ToString("F0")}%";
+            pathInfoTxt.text = $"Len: {allLenghts[iPath].ToString("F1")}\nPro: {(100f * allProbality[iPath]).ToString("F1")}%";
         }
     }
 }

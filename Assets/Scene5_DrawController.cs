@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using UnityEditor;
 
 namespace Scene5
 {
@@ -163,7 +162,7 @@ namespace Scene5
             float minDis = Mathf.Infinity;
             foreach (Scene5_Vertex ver in allOriginVers)
             {
-                if (HandleUtility.DistancePointLine(ver.transform.position,
+                if (Intersection.Instance.DistancePointToLine(ver.transform.position,
                     currentLineRenderer.GetPosition(0),
                     mousePos) < snapDistance)
                 {
