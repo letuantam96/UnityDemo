@@ -253,6 +253,7 @@ public class Scene5_PathFinder : MonoBehaviour
     {
         visitedVertexs.Clear();
         count = 0;
+        allPaths.Clear();
 
         FindPath(start);
         Debug.Log($"FindAllPaths: {count}");

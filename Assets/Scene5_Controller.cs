@@ -71,6 +71,8 @@ namespace Scene5
                 Destroy(child.gameObject);
             }
 
+            string sPath = "";
+
             List<Scene5_Vertex> path = allPaths[iPath];
 
             for (int i = 0; i < path.Count - 1; i++)
@@ -86,9 +88,13 @@ namespace Scene5
                 txt.text = $"{lenght.ToString("F1")}";
                 Vector3 pos = (lineRen.GetPosition(0) + lineRen.GetPosition(1)) * 0.5f;
                 txt.transform.position = pos;
+
+                sPath = sPath + path[i].name.ToString() + " -> ";
             }
 
             pathCountTxt.text = $"{iPath + 1}/{allPaths.Count}";
+            Debug.Log("Path: " + sPath);
+
         }
     }
 }
