@@ -11,7 +11,7 @@ public class Scene5_Line : MonoBehaviour
     public Scene5_Vertex end = null;
     public float lenght = 0f;
 
-    private void Start()
+    private void Awake()
     {
         lenghTxt.gameObject.SetActive(false);
     }

@@ -97,6 +97,7 @@ namespace Scene5
 
         void OnReleasing()
         {
+            Scene5_Vertex mouseVertex = SnapMousePosIntoVertex();
             Scene5_Vertex tempVer = FindNearestVertexToLine();
             if (!tempVer
                 || currentInk < CurrentLineInk
@@ -120,6 +121,25 @@ namespace Scene5
             }
 
             UpdateInkTxt(currentInk);
+
+
+            if (mouseVertex != tempVer)
+            {
+                // create new
+                GameObject brushInstance = Instantiate(brush, paths);
+                currentLineRenderer = brushInstance.GetComponent<LineRenderer>();
+
+                //because you gotta have 2 points to start a line renderer, 
+                Vector2 mousePos = m_camera.ScreenToWorldPoint(Input.mousePosition);
+
+                currentLineRenderer.SetPosition(0, tempVer.transform.position);
+                currentLineRenderer.SetPosition(1, mousePos);
+
+                currentLineRenderer.gameObject.GetComponent<Scene5_Line>().SetVertex(tempVer, null);
+
+                OnReleasing();
+            }
+
             currentLineRenderer = null;
         }
 
