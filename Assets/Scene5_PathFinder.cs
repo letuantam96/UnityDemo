@@ -350,21 +350,28 @@ public class Scene5_PathFinder : MonoBehaviour
     }
 
 
-
+    // AMBUSH
     public void SearchAllAmbush()
     {
         //float DISTANCE = 1f;
 
         ambushs.Clear();
+        foreach (Transform child in ambushTrf) Destroy(child.gameObject);
 
-        List<Scene5_Line> sortedList = allLines.OrderBy(x => x.start.transform.position.x).ThenBy(x => x.end.transform.position.x).ToList();
+        List<Scene5_Line> sortedList = allLines.OrderBy(x => x.start.transform.position.x).ThenBy(x => - x.start.transform.position.y).ToList();
 
         Vector2 considerPos;
 
         // follow line
         foreach (Scene5_Line line in sortedList)
         {
-            Vector3 start, end;
+            List<Vector3> tempList = new List<Vector3>();
+            tempList.Add(line.start.transform.position);
+            tempList.Add(line.end.transform.position);
+            tempList = tempList.OrderBy(x => x.x).ThenBy(x => -x.y).ToList();
+            Vector3 start = tempList[0], end = tempList[1];
+            
+
             start = line.start.transform.position.x < line.end.transform.position.x ? line.start.transform.position : line.end.transform.position;
             end = line.start.transform.position.x < line.end.transform.position.x ? line.end.transform.position : line.start.transform.position;
             float lineLenght = Vector2.Distance(start, end);
@@ -397,16 +404,25 @@ public class Scene5_PathFinder : MonoBehaviour
 
 
         // follow 2 point
-        List<Vector3> allVertexAndIntersecs = new List<Vector3>();
-        foreach (Scene5_Vertex ver in Scene5_DrawController.Instance.allOriginVers) allVertexAndIntersecs.Add(ver.transform.position);
-        foreach (Scene5_Vertex inter in intersecs) allVertexAndIntersecs.Add(inter.transform.position);
-        allVertexAndIntersecs = allVertexAndIntersecs.OrderBy(x => x.x).ToList();
-        foreach (Vector3 ver in allVertexAndIntersecs)
+        List<Scene5_Vertex> allVertexAndIntersecs = new List<Scene5_Vertex>();
+        //foreach (Scene5_Vertex ver in Scene5_DrawController.Instance.allOriginVers) allVertexAndIntersecs.Add(ver.transform.position);
+        //foreach (Scene5_Vertex inter in intersecs) allVertexAndIntersecs.Add(inter.transform.position);
+        foreach (Scene5_Line line in sortedList)
+        {
+            if (!allVertexAndIntersecs.Contains(line.start)) allVertexAndIntersecs.Add(line.start);
+            if (!allVertexAndIntersecs.Contains(line.end)) allVertexAndIntersecs.Add(line.end);
+            foreach (Scene5_Vertex ver in line.intersecs)
+            {
+                if (!allVertexAndIntersecs.Contains(ver)) allVertexAndIntersecs.Add(ver);
+            }
+        }
+        allVertexAndIntersecs = allVertexAndIntersecs.OrderBy(x => x.transform.position.x).ThenBy(x => -x.transform.position.y).ToList();
+        foreach (Scene5_Vertex ver in allVertexAndIntersecs)
         {
             for (float angle = 0f; angle < 2f * Mathf.PI; angle += 2f * Mathf.PI / 360f)
             {
                 Vector2 chiPhuong = new Vector2(Mathf.Cos(angle), Mathf.Sin(angle));
-                considerPos = (Vector2)ver + chiPhuong.normalized * AMBUSH_DISTOROAD;
+                considerPos = (Vector2)ver.transform.position + chiPhuong.normalized * AMBUSH_DISTOROAD;
                 if (IsThisPosAvaiableForAmbush(null, considerPos))
                 {
                     ambushs.Add(new Scene5_Ambush(considerPos));
