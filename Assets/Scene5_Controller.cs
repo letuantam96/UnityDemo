@@ -17,6 +17,8 @@ namespace Scene5
         [SerializeField] Transform debugPathTrf;
         [SerializeField] TMP_Text pathCountTxt;
         [SerializeField] TMP_Text pathInfoTxt;
+        [SerializeField] GameObject invalidLinePrefab;
+        [SerializeField] Transform invalidPathTrf;
 
         private void Awake()
         {
@@ -50,6 +52,7 @@ namespace Scene5
             Scene5_PathFinder.Instance.FindAllPaths();
             iPath = 0;
             DrawDebugPath();
+            Scene5_PathFinder.Instance.CheckInvalidPath();
         }
 
         public void AmbushBtnPressed()
@@ -78,6 +81,12 @@ namespace Scene5
             ClearDebugPaths();
 
             string sPath = "";
+
+            if (allPaths.Count <= 0)
+            {
+
+                return;
+            }
 
             List<Scene5_Vertex> path = allPaths[iPath];
 
@@ -117,6 +126,25 @@ namespace Scene5
             {
                 Destroy(child.gameObject);
             }
+        }
+
+
+        public void ClearInvalidPath()
+        {
+            // clear
+            foreach (Transform child in invalidPathTrf)
+            {
+                Destroy(child.gameObject);
+            }
+        }
+
+        public void DrawInvalidPath(Vector3 start, Vector3 end)
+        {
+            GameObject invalidInstance = Instantiate(invalidLinePrefab, invalidPathTrf);
+            LineRenderer lineRen = invalidInstance.GetComponent<LineRenderer>();
+
+            lineRen.SetPosition(0, start);
+            lineRen.SetPosition(1, end);
         }
     }
 }

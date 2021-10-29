@@ -462,6 +462,57 @@ public class Scene5_PathFinder : MonoBehaviour
 
         return true;
     }
+
+
+
+
+
+
+
+    public void CheckInvalidPath()
+    {
+        Scene5_Controller.Instance.ClearInvalidPath();
+
+
+        foreach (Scene5_Vertex ver in Scene5_DrawController.Instance.allOriginVers)
+        {
+            if (ver != Scene5_DrawController.Instance.start && ver != Scene5_DrawController.Instance.end)
+            {
+                if (connectVers.ContainsKey(ver) && connectVers[ver].Count == 1)
+                {
+                    // found an invalid-path here
+
+                    List<Scene5_Vertex> visited = new List<Scene5_Vertex>();
+                    Scene5_Vertex tempVer = ver;
+                    visited.Add(tempVer);
+                    do
+                    {
+                        // get otherVer
+                        Scene5_Vertex otherVer = null;
+                        foreach (var considerVer in connectVers[tempVer])
+                        {
+                            if (!visited.Contains(considerVer))
+                            {
+                                otherVer = considerVer;
+                                break;
+                            }
+                        }
+
+                        Scene5_Controller.Instance.DrawInvalidPath(tempVer.transform.position, otherVer.transform.position);
+
+                        if (otherVer == start || otherVer == end 
+                            || connectVers[otherVer].Count != 2)
+                        {
+                            break;
+                        }
+
+                        tempVer = otherVer;
+                    }
+                    while (true);
+                }
+            }
+        }
+    }
 }
 
 public class Path
