@@ -179,7 +179,7 @@ public class Intersection : MonoBehaviour
         return Vector3.Distance(point, NearestPointOnFiniteLine(start, end, point));
     }
 
-    Vector3 NearestPointOnFiniteLine(Vector3 start, Vector3 end, Vector3 pnt)
+    public Vector3 NearestPointOnFiniteLine(Vector3 start, Vector3 end, Vector3 pnt)
     {
         var line = (end - start);
         var len = line.magnitude;

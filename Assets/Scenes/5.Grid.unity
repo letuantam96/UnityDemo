@@ -1070,6 +1070,7 @@ MonoBehaviour:
   vertexsTrf: {fileID: 1042533844}
   inkTxt: {fileID: 133196526}
   snapDistance: 1.5
+  startDrawSnapDistance: 1
   maxInk: 100
 --- !u!1 &374176177
 GameObject:

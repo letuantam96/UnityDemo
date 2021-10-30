@@ -25,6 +25,7 @@ namespace Scene5
 
         [Header("Config")]
         [SerializeField] private float snapDistance = 0.1f;
+        [SerializeField] private float startDrawSnapDistance = 0.1f;
         [SerializeField] private float maxInk = 100f;
         private float currentInk;
 
@@ -70,8 +71,11 @@ namespace Scene5
         {
 
             Scene5_Vertex tempVer = SnapMousePosIntoVertex();
-            if (!tempVer) return;
-
+            if (!tempVer)
+            {
+                DeleteLineBehind();
+                return;
+            }
 
             GameObject brushInstance = Instantiate(brush, paths);
             currentLineRenderer = brushInstance.GetComponent<LineRenderer>();
@@ -105,6 +109,11 @@ namespace Scene5
             {
                 if (currentLineRenderer)
                     Destroy(currentLineRenderer.gameObject);
+
+                if (currentInk < CurrentLineInk)
+                {
+                    MessageManager.Instance.ShowMessage("Out of points, let's tap any roads to regain some then redraw");
+                }
             }
             else
             {
@@ -124,7 +133,7 @@ namespace Scene5
             UpdateInkTxt(currentInk);
 
 
-            if (mouseVertex != tempVer)
+            if (tempVer && mouseVertex != tempVer)
             {
                 // create new
                 GameObject brushInstance = Instantiate(brush, paths);
@@ -145,7 +154,7 @@ namespace Scene5
             Vector2 mousePos = m_camera.ScreenToWorldPoint(Input.mousePosition);
             foreach (Scene5_Vertex ver in allOriginVers)
             {
-                if (Vector3.Distance(ver.gameObject.transform.position, mousePos) <= snapDistance)
+                if (Vector3.Distance(ver.gameObject.transform.position, mousePos) <= startDrawSnapDistance)
                 {
                     return ver;
                 }
@@ -180,6 +189,49 @@ namespace Scene5
         void UpdateInkTxt(float ink)
         {
             inkTxt.text = $"{(int)(ink)}";
+        }
+
+
+
+
+
+
+
+
+        void DeleteLineBehind()
+        {
+
+
+            Vector2 mousePos = m_camera.ScreenToWorldPoint(Input.mousePosition);
+            // find line
+            for (int i = 0; i < Scene5_PathFinder.Instance.allLines.Count; i++)
+            {
+                Scene5_Line line = Scene5_PathFinder.Instance.allLines[i];
+                if (Intersection.Instance.DistancePointToLine(mousePos, 
+                    line.start.transform.position, 
+                    line.end.transform.position) < 0.5f)
+                {
+                    Vector3 hinhChieu = Intersection.Instance.NearestPointOnFiniteLine(line.start.transform.position, line.end.transform.position, mousePos);
+                    if (Vector3.Distance(line.start.transform.position, hinhChieu) + Vector3.Distance(hinhChieu, line.end.transform.position) 
+                        - Vector3.Distance(line.start.transform.position, line.end.transform.position) < Mathf.Epsilon)
+                    {
+                        // delete this line
+
+                        Scene5_Controller.Instance.ClearDebugPaths();
+                        Scene5_Controller.Instance.ClearInvalidPath();
+
+
+                        currentInk += Vector3.Distance(line.start.transform.position, line.end.transform.position);
+                        
+                        
+                        Scene5_PathFinder.Instance.allLines.Remove(line);
+                        Scene5_PathFinder.Instance.RemoveIntersect(line);
+                        Destroy(line.gameObject);
+
+                        i--;
+                    }
+                }
+            }
         }
     }
 }

@@ -127,6 +127,30 @@ public class Scene5_PathFinder : MonoBehaviour
     }
 
 
+    public void RemoveIntersect(Scene5_Line line)
+    {
+        while (line.intersecs.Count > 0)
+        {
+            Scene5_Vertex inter = line.intersecs[0];
+            line.intersecs.Remove(inter);
+            UpdateConnectVertex(line);
+
+            foreach (Scene5_Line otherLine in allLines)
+            {
+                if (otherLine != line && otherLine.intersecs.Contains(inter))
+                {
+                    otherLine.intersecs.Remove(inter);
+                    UpdateConnectVertex(otherLine);
+                }
+            }
+
+            Destroy(inter.gameObject);
+        }
+
+        // remove start -> end connect
+        connectVers[line.start].Remove(line.end);
+        connectVers[line.end].Remove(line.start);
+    }
 
 
     void UpdateConnectVertex(Scene5_Line line)
